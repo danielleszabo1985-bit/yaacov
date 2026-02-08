@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבחן יעקב ועשו</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .admin-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #667eea;
+        }
+
+        .admin-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .view-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .download-all-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .clear-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .stats {
+            text-align: center;
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+        
+        .name-section {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .question {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-right: 4px solid #667eea;
+        }
+        
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .option:hover {
+            background: #e9ecef;
+        }
+        
+        .option input[type="radio"] {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .option label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .feedback {
+            font-size: 1.2em;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .results-table th, .results-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .results-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        .results-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .results-table tr:hover {
+            background: #e9ecef;
+        }
+
+        .new-quiz-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .new-quiz-btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📖 מבחן יעקב ועשו</h1>
+        <p class="subtitle">בדקו את הידע שלכם בפרשת יעקב ועשו</p>
+        
+        <div class="admin-panel">
+            <div class="admin-title">🎯 לוח ניהול מורה</div>
+            <div class="admin-buttons">
+                <button class="admin-btn view-btn" onclick="viewAllResults()">👁️ צפייה בכל התוצאות</button>
+                <button class="admin-btn download-all-btn" onclick="downloadAllResults()">📊 הורדת data.xlsx</button>
+                <button class="admin-btn clear-btn" onclick="clearAllData()">🗑️ מחיקת כל הנתונים</button>
+            </div>
+            <div class="stats" id="statsDisplay">טוען נתונים...</div>
+        </div>
+        
+        <form id="quizForm">
+            <div class="name-section">
+                <label for="studentName">שם התלמיד/ה:</label>
+                <input type="text" id="studentName" required placeholder="הכניסו את שמכם המלא">
+            </div>
+            
+            <div class="question">
+                <div class="question-title">1. מי נולד ראשון, יעקב או עשו?</div>
+                <div class="option">
+                    <input type="radio" name="q1" value="א" id="q1a">
+                    <label for="q1a">א. יעקב</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q1" value="ב" id="q1b">
+                    <label for="q1b">ב. עשו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q1" value="ג" id="q1c">
+                    <label for="q1c">ג. נולדו בו זמנית</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q1" value="ד" id="q1d">
+                    <label for="q1d">ד. לא כתוב בתורה</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">2. במה אחז יעקב כשנולד?</div>
+                <div class="option">
+                    <input type="radio" name="q2" value="א" id="q2a">
+                    <label for="q2a">א. בראש של עשו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q2" value="ב" id="q2b">
+                    <label for="q2b">ב. בעקב של עשו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q2" value="ג" id="q2c">
+                    <label for="q2c">ג. ביד של עשו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q2" value="ד" id="q2d">
+                    <label for="q2d">ד. לא אחז בכלום</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">3. מה היה עיסוקו של עשו?</div>
+                <div class="option">
+                    <input type="radio" name="q3" value="א" id="q3a">
+                    <label for="q3a">א. רועה צאן</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q3" value="ב" id="q3b">
+                    <label for="q3b">ב. איש יודע ציד, איש שדה</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q3" value="ג" id="q3c">
+                    <label for="q3c">ג. לומד תורה באוהל</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q3" value="ד" id="q3d">
+                    <label for="q3d">ד. סוחר</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">4. מה היה עיסוקו של יעקב?</div>
+                <div class="option">
+                    <input type="radio" name="q4" value="א" id="q4a">
+                    <label for="q4a">א. איש ציד</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q4" value="ב" id="q4b">
+                    <label for="q4b">ב. איש תם יושב אוהלים</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q4" value="ג" id="q4c">
+                    <label for="q4c">ג. איכר</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q4" value="ד" id="q4d">
+                    <label for="q4d">ד. רועה בקר</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">5. מה מכר עשו ליעקב?</div>
+                <div class="option">
+                    <input type="radio" name="q5" value="א" id="q5a">
+                    <label for="q5a">א. את צאנו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q5" value="ב" id="q5b">
+                    <label for="q5b">ב. את ביתו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q5" value="ג" id="q5c">
+                    <label for="q5c">ג. את הבכורה</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q5" value="ד" id="q5d">
+                    <label for="q5d">ד. את חרבו</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">6. תמורת מה מכר עשו את הבכורה?</div>
+                <div class="option">
+                    <input type="radio" name="q6" value="א" id="q6a">
+                    <label for="q6a">א. כסף וזהב</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q6" value="ב" id="q6b">
+                    <label for="q6b">ב. נזיד עדשים</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q6" value="ג" id="q6c">
+                    <label for="q6c">ג. צאן ובקר</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q6" value="ד" id="q6d">
+                    <label for="q6d">ד. שדות וכרמים</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">7. מי שלח את יעקב לקבל את ברכת יצחק במקום עשו?</div>
+                <div class="option">
+                    <input type="radio" name="q7" value="א" id="q7a">
+                    <label for="q7a">א. אברהם</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q7" value="ב" id="q7b">
+                    <label for="q7b">ב. רבקה</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q7" value="ג" id="q7c">
+                    <label for="q7c">ג. שרה</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q7" value="ד" id="q7d">
+                    <label for="q7d">ד. עשו עצמו</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">8. מה לבש יעקב כדי להתחפש לעשו?</div>
+                <div class="option">
+                    <input type="radio" name="q8" value="א" id="q8a">
+                    <label for="q8a">א. בגדי ציד</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q8" value="ב" id="q8b">
+                    <label for="q8b">ב. בגדי עשו ועורות גדיים על ידיו</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q8" value="ג" id="q8c">
+                    <label for="q8c">ג. שריון ומגן</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q8" value="ד" id="q8d">
+                    <label for="q8d">ד. לא התחפש</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">9. לאן ברח יעקב מפני עשו?</div>
+                <div class="option">
+                    <input type="radio" name="q9" value="א" id="q9a">
+                    <label for="q9a">א. למצרים</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q9" value="ב" id="q9b">
+                    <label for="q9b">ב. לחרן, אל לבן</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q9" value="ג" id="q9c">
+                    <label for="q9c">ג. לארץ כנען</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q9" value="ד" id="q9d">
+                    <label for="q9d">ד. לבאר שבע</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <div class="question-title">10. כמה מאות איש היו עם עשו כשבא לפגוש את יעקב?</div>
+                <div class="option">
+                    <input type="radio" name="q10" value="א" id="q10a">
+                    <label for="q10a">א. מאה איש</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q10" value="ב" id="q10b">
+                    <label for="q10b">ב. מאתיים איש</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q10" value="ג" id="q10c">
+                    <label for="q10c">ג. שלוש מאות איש</label>
+                </div>
+                <div class="option">
+                    <input type="radio" name="q10" value="ד" id="q10d">
+                    <label for="q10d">ד. ארבע מאות איש</label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">הגש מבחן</button>
+        </form>
+
+        <div id="result" class="result">
+            <h2>תוצאות המבחן</h2>
+            <div class="score" id="scoreDisplay"></div>
+            <div class="feedback" id="feedbackText"></div>
+            <button class="new-quiz-btn" onclick="resetQuiz()">📝 מבחן חדש</button>
+        </div>
+    </div>
+
+    <div id="resultsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">📊 כל תוצאות המבחנים</div>
+                <button class="close-btn" onclick="closeModal()">✖ סגור</button>
+            </div>
+            <div id="resultsTableContainer"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        const correctAnswers = {
+            q1: 'ב', q2: 'ב', q3: 'ב', q4: 'ב', q5: 'ג',
+            q6: 'ב', q7: 'ב', q8: 'ב', q9: 'ב', q10: 'ד'
+        };
+
+        // קבלת כל התוצאות מהזיכרון
+        function getAllResults() {
+            const data = localStorage.getItem('quizResults');
+            return data ? JSON.parse(data) : [];
+        }
+
+        // שמירת תוצאה חדשה
+        function saveResult(result) {
+            const results = getAllResults();
+            results.push(result);
+            localStorage.setItem('quizResults', JSON.stringify(results));
+            updateStats();
+        }
+
+        // עדכון הסטטיסטיקות
+        function updateStats() {
+            const results = getAllResults();
+            const count = results.length;
+            const avgScore = count > 0 ? (results.reduce((sum, r) => sum + r.score, 0) / count).toFixed(1) : 0;
+            document.getElementById('statsDisplay').textContent = 
+                `📈 סה"כ ${count} תלמידים מילאו את המבחן | ציון ממוצע: ${avgScore}/10`;
+        }
+
+        // הגשת המבחן
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            
+            if (!studentName.trim()) {
+                alert('אנא הכניסו את שמכם');
+                return;
+            }
+
+            let score = 0;
+            let answers = {};
+            
+            for (let i = 1; i <= 10; i++) {
+                const answer = document.querySelector(`input[name="q${i}"]:checked`);
+                if (!answer) {
+                    alert(`אנא ענו על שאלה ${i}`);
+                    return;
+                }
+                answers[`q${i}`] = answer.value;
+                if (answer.value === correctAnswers[`q${i}`]) {
+                    score++;
+                }
+            }
+
+            const now = new Date();
+            const result = {
+                name: studentName,
+                date: now.toLocaleDateString('he-IL'),
+                time: now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }),
+                q1: answers.q1,
+                q2: answers.q2,
+                q3: answers.q3,
+                q4: answers.q4,
+                q5: answers.q5,
+                q6: answers.q6,
+                q7: answers.q7,
+                q8: answers.q8,
+                q9: answers.q9,
+                q10: answers.q10,
+                score: score,
+                percentage: ((score / 10) * 100).toFixed(0) + '%'
+            };
+
+            saveResult(result);
+            displayResults(score);
+        });
+
+        // הצגת תוצאות
+        function displayResults(score) {
+            const percentage = (score / 10) * 100;
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const feedbackText = document.getElementById('feedbackText');
+            
+            scoreDisplay.textContent = `${score}/10 (${percentage}%)`;
+            
+            let feedback = '';
+            if (percentage >= 90) {
+                feedback = '🌟 מצוין! אתם מכירים מצוין את הסיפור!';
+            } else if (percentage >= 70) {
+                feedback = '👍 יפה מאוד! ידע טוב בסיפור!';
+            } else if (percentage >= 50) {
+                feedback = '📚 לא רע, אבל כדאי לחזור על החומר';
+            } else {
+                feedback = '💪 מומלץ ללמוד שוב את הפרשה';
+            }
+            
+            feedbackText.textContent = feedback;
+            
+            document.getElementById('result').classList.add('show');
+            document.getElementById('quizForm').style.display = 'none';
+        }
+
+        // הורדת כל התוצאות לקובץ data.xlsx
+        function downloadAllResults() {
+            const results = getAllResults();
+            
+            if (results.length === 0) {
+                alert('אין תוצאות להורדה');
+                return;
+            }
+
+            // הכנת הנתונים עבור אקסל
+            const excelData = results.map(r => ({
+                'שם התלמיד': r.name,
+                'תאריך מילוי המבחן': r.date,
+                'שעת מילוי': r.time,
+                'שאלה 1': r.q1,
+                'שאלה 2': r.q2,
+                'שאלה 3': r.q3,
+                'שאלה 4': r.q4,
+                'שאלה 5': r.q5,
+                'שאלה 6': r.q6,
+                'שאלה 7': r.q7,
+                'שאלה 8': r.q8,
+                'שאלה 9': r.q9,
+                'שאלה 10': r.q10,
+                'הציון שהתקבל': r.score,
+                'אחוז הצלחה': r.percentage
+            }));
+
+            // יצירת קובץ אקסל
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'תוצאות');
+            
+            // הורדת הקובץ בשם data.xlsx
+            XLSX.writeFile(wb, 'data.xlsx');
+        }
+
+        // צפייה בכל התוצאות
+        function viewAllResults() {
+            const results = getAllResults();
+            
+            if (results.length === 0) {
+                alert('אין תוצאות להצגה');
+                return;
+            }
+
+            let tableHTML = `
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>שם</th>
+                            <th>תאריך</th>
+                            <th>שעה</th>
+                            <th>ש1</th>
+                            <th>ש2</th>
+                            <th>ש3</th>
+                            <th>ש4</th>
+                            <th>ש5</th>
+                            <th>ש6</th>
+                            <th>ש7</th>
+                            <th>ש8</th>
+                            <th>ש9</th>
+                            <th>ש10</th>
+                            <th>ציון</th>
+                            <th>אחוז</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            results.forEach((r, index) => {
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${r.name}</td>
+                        <td>${r.date}</td>
+                        <td>${r.time}</td>
+                        <td>${r.q1}</td>
+                        <td>${r.q2}</td>
+                        <td>${r.q3}</td>
+                        <td>${r.q4}</td>
+                        <td>${r.q5}</td>
+                        <td>${r.q6}</td>
+                        <td>${r.q7}</td>
+                        <td>${r.q8}</td>
+                        <td>${r.q9}</td>
+                        <td>${r.q10}</td>
+                        <td><strong>${r.score}/10</strong></td>
+                        <td>${r.percentage}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            
+            document.getElementById('resultsTableContainer').innerHTML = tableHTML;
+            document.getElementById('resultsModal').classList.add('show');
+        }
+
+        // סגירת המודל
+        function closeModal() {
+            document.getElementById('resultsModal').classList.remove('show');
+        }
+
+        // מחיקת כל הנתונים
+        function clearAllData() {
+            if (confirm('האם אתה בטוח שברצונך למחוק את כל הנתונים? פעולה זו לא ניתנת לביטול!')) {
+                localStorage.removeItem('quizResults');
+                updateStats();
+                alert('כל הנתונים נמחקו בהצלחה');
+            }
+        }
+
+        // איפוס המבחן למילוי חדש
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('quizForm').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // טעינה ראשונית
+        updateStats();
